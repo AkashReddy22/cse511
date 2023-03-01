@@ -49,14 +49,14 @@ object HotcellAnalysis {
     
      points_req.createOrReplaceTempView("points_req")  
     
-     val pt = spark.sql("select sum(val_count) as sumVal, sum(val_count*val_count) as sqr_sum from points_req").persist()
+     val pt = spark.sql("select sum(val_count) as val_sum, sum(val_count*val_count) as sqr_sum from points_req").persist()
     val val_sum = pt.first().getLong(0).toDouble
     val sqr_sum = pt.first().getLong(1).toDouble
 
     val mean = (val_sum/numCells)
     val standard_deviation = Math.sqrt((sqr_sum/numCells)-(mean*mean))
 
-    val neighbor_condn = spark.sql("select gp1.x as x , gp1.y as y, gp1.z as z, count(*) as numOfNb, sum(gp2.countVal) as sigma from points_req as gp1 inner join points_req as gp2 on ((abs(gp1.x-gp2.x) <= 1 and  abs(gp1.y-gp2.y) <= 1 and abs(gp1.z-gp2.z) <= 1)) group by gp1.x, gp1.y, gp1.z").persist()
+    val neighbor_condn = spark.sql("select gp1.x as x , gp1.y as y, gp1.z as z, count(*) as numOfNb, sum(gp2.val_count) as sigma from points_req as gp1 inner join points_req as gp2 on ((abs(gp1.x-gp2.x) <= 1 and  abs(gp1.y-gp2.y) <= 1 and abs(gp1.z-gp2.z) <= 1)) group by gp1.x, gp1.y, gp1.z").persist()
     neighbor_condn.createOrReplaceTempView("neighbor_condn")
 
     spark.udf.register("Zscorecalculation",(mean: Double, stddev:Double, numOfNb: Int, sigma: Int, numCells:Int)=>((
