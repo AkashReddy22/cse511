@@ -6,7 +6,7 @@ object HotzoneUtils {
 
     // YOU NEED TO CHANGE THIS PART        
     
-    val rect = queryRectangle.spit(",")
+    val rect = queryRectangle.split(",")
     val target = pointString.split(",")
 
     val pt_x: Double = target(0).trim.toDouble
