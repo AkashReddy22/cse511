@@ -49,7 +49,7 @@ object HotcellUtils {
 
   // YOU NEED TO CHANGE THIS PART
 
-  def Zscorecalculation(mean: Double, stddev: Double, numOfNb: Int, sigma: Int, numCells: Int): Double =
+  def Gscorecalculation(mean: Double, stddev: Double, numOfNb: Int, sigma: Int, numCells: Int): Double =
   {  	
     val numerator = sigma-(mean*numOfNb)  	
     val denominator = stddev*Math.sqrt((numCells*numOfNb - numOfNb*numOfNb)/(numCells-1))
