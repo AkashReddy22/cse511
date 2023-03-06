@@ -67,7 +67,7 @@ object HotcellAnalysis {
 
     Gscoredata.createOrReplaceTempView("Gscoredata")
 
-    val return_val = spark.sql("select x,y,z from Gscoredata order by Gscore desc")
+    val return_val = spark.sql("select x,y,z from Gscoredata order by Gscore desc limit 50")
     return return_val
     
 
