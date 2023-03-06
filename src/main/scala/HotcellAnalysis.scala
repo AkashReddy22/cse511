@@ -59,15 +59,15 @@ object HotcellAnalysis {
     val neighbor_condn = spark.sql("select gp1.x as x , gp1.y as y, gp1.z as z, count(*) as numOfNb, sum(gp2.val_count) as sigma from points_req as gp1 inner join points_req as gp2 on ((abs(gp1.x-gp2.x) <= 1 and  abs(gp1.y-gp2.y) <= 1 and abs(gp1.z-gp2.z) <= 1)) group by gp1.x, gp1.y, gp1.z").persist()
     neighbor_condn.createOrReplaceTempView("neighbor_condn")
 
-    spark.udf.register("Zscorecalculation",(mean: Double, stddev:Double, numOfNb: Int, sigma: Int, numCells:Int)=>((
-    HotcellUtils.Zscorecalculation(mean, stddev, numOfNb, sigma, numCells)
+    spark.udf.register("Gscorecalculation",(mean: Double, stddev:Double, numOfNb: Int, sigma: Int, numCells:Int)=>((
+    HotcellUtils.Gscorecalculation(mean, stddev, numOfNb, sigma, numCells)
     )))  
 
-    val Zscoredata = spark.sql("select x,y,z,Zscorecalculation("+ mean + ","+ standard_deviation +",numOfNb,sigma," + numCells+") as zscore from neighbor_condn")
+    val Gscoredata = spark.sql("select x,y,z,Gscorecalculation("+ mean + ","+ standard_deviation +",numOfNb,sigma," + numCells+") as Gscore from neighbor_condn")
 
-    Zscoredata.createOrReplaceTempView("Zscoredata")
+    Gscoredata.createOrReplaceTempView("Gscoredata")
 
-    val return_val = spark.sql("select x,y,z from Zscoredata order by zscore desc")
+    val return_val = spark.sql("select x,y,z from Gscoredata order by Gscore desc")
     return return_val
     
 
